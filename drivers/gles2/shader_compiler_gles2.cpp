@@ -1106,6 +1106,7 @@ ShaderCompilerGLES2::ShaderCompilerGLES2() {
 	actions[VS::SHADER_SPATIAL].renames["PROJECTION_MATRIX"] = "projection_matrix";
 	actions[VS::SHADER_SPATIAL].renames["INV_PROJECTION_MATRIX"] = "projection_inverse_matrix";
 	actions[VS::SHADER_SPATIAL].renames["MODELVIEW_MATRIX"] = "modelview";
+	actions[VS::SHADER_SPATIAL].renames["MAIN_CAMERA_MATRIX"] = "main_camera_matrix";
 
 	actions[VS::SHADER_SPATIAL].renames["VIEW_INDEX"] = "view_index";
 	actions[VS::SHADER_SPATIAL].renames["VIEW_MONO_LEFT"] = "0";

@@ -83,6 +83,8 @@ layout(std140) uniform SceneData { // ubo:0
 	highp mat4 camera_inverse_matrix;
 	highp mat4 camera_matrix;
 
+	highp mat4 main_camera_matrix;
+
 	mediump vec4 ambient_light_color;
 	mediump vec4 bg_color;
 
@@ -777,6 +779,8 @@ layout(std140) uniform SceneData {
 	highp mat4 inv_projection_matrix;
 	highp mat4 camera_inverse_matrix;
 	highp mat4 camera_matrix;
+
+	highp mat4 main_camera_matrix;
 
 	mediump vec4 ambient_light_color;
 	mediump vec4 bg_color;

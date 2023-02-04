@@ -2708,7 +2708,7 @@ bool VisualServerScene::_light_instance_update_shadow(Instance *p_instance, cons
 					VSG::scene_render->light_instance_set_shadow_transform(light->instance, ortho_camera, ortho_transform, 0, distances[i + 1], i, bias_scale);
 				}
 
-				VSG::scene_render->render_shadow(light->instance, p_shadow_atlas, i, (RasterizerScene::InstanceBase **)instance_shadow_cull_result, cull_count);
+				VSG::scene_render->render_shadow(light->instance, p_shadow_atlas, i, (RasterizerScene::InstanceBase **)instance_shadow_cull_result, cull_count, p_cam_transform);
 			}
 
 		} break;
@@ -2751,7 +2751,7 @@ bool VisualServerScene::_light_instance_update_shadow(Instance *p_instance, cons
 					}
 
 					VSG::scene_render->light_instance_set_shadow_transform(light->instance, CameraMatrix(), light_transform, radius, 0, i);
-					VSG::scene_render->render_shadow(light->instance, p_shadow_atlas, i, (RasterizerScene::InstanceBase **)instance_shadow_cull_result, cull_count);
+					VSG::scene_render->render_shadow(light->instance, p_shadow_atlas, i, (RasterizerScene::InstanceBase **)instance_shadow_cull_result, cull_count, p_cam_transform);
 				}
 			} else { //shadow cube
 
@@ -2802,7 +2802,7 @@ bool VisualServerScene::_light_instance_update_shadow(Instance *p_instance, cons
 					}
 
 					VSG::scene_render->light_instance_set_shadow_transform(light->instance, cm, xform, radius, 0, i);
-					VSG::scene_render->render_shadow(light->instance, p_shadow_atlas, i, (RasterizerScene::InstanceBase **)instance_shadow_cull_result, cull_count);
+					VSG::scene_render->render_shadow(light->instance, p_shadow_atlas, i, (RasterizerScene::InstanceBase **)instance_shadow_cull_result, cull_count, p_cam_transform);
 				}
 
 				//restore the regular DP matrix
@@ -2837,7 +2837,7 @@ bool VisualServerScene::_light_instance_update_shadow(Instance *p_instance, cons
 			}
 
 			VSG::scene_render->light_instance_set_shadow_transform(light->instance, cm, light_transform, radius, 0, 0);
-			VSG::scene_render->render_shadow(light->instance, p_shadow_atlas, 0, (RasterizerScene::InstanceBase **)instance_shadow_cull_result, cull_count);
+			VSG::scene_render->render_shadow(light->instance, p_shadow_atlas, 0, (RasterizerScene::InstanceBase **)instance_shadow_cull_result, cull_count, p_cam_transform);
 
 		} break;
 	}

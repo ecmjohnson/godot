@@ -118,6 +118,7 @@ public:
 			float inv_projection_matrix[16];
 			float camera_inverse_matrix[16];
 			float camera_matrix[16];
+			float main_camera_matrix[16];
 			float ambient_light_color[4];
 			float bg_color[4];
 			float fog_color_enabled[4];
@@ -838,7 +839,7 @@ public:
 
 	void _draw_sky(RasterizerStorageGLES3::Sky *p_sky, const CameraMatrix &p_projection, const Transform &p_transform, bool p_vflip, float p_custom_fov, float p_energy, const Basis &p_sky_orientation);
 
-	void _setup_environment(Environment *env, const CameraMatrix &p_cam_projection, const Transform &p_cam_transform, const int p_eye = 0, bool p_no_fog = false);
+	void _setup_environment(Environment *env, const CameraMatrix &p_cam_projection, const Transform &p_cam_transform, const Transform &p_main_cam_transform, const int p_eye = 0, bool p_no_fog = false);
 	void _setup_directional_light(int p_index, const Transform &p_camera_inverse_transform, bool p_use_shadows);
 	void _setup_lights(RID *p_light_cull_result, int p_light_cull_count, const Transform &p_camera_inverse_transform, const CameraMatrix &p_camera_projection, RID p_shadow_atlas);
 	void _setup_reflections(RID *p_reflection_probe_cull_result, int p_reflection_probe_cull_count, const Transform &p_camera_inverse_transform, const CameraMatrix &p_camera_projection, RID p_reflection_atlas, Environment *p_env);
@@ -857,7 +858,7 @@ public:
 
 	bool _element_needs_directional_add(RenderList::Element *e);
 	virtual void render_scene(const Transform &p_cam_transform, const CameraMatrix &p_cam_projection, const int p_eye, bool p_cam_ortogonal, InstanceBase **p_cull_result, int p_cull_count, RID *p_light_cull_result, int p_light_cull_count, RID *p_reflection_probe_cull_result, int p_reflection_probe_cull_count, RID p_environment, RID p_shadow_atlas, RID p_reflection_atlas, RID p_reflection_probe, int p_reflection_probe_pass);
-	virtual void render_shadow(RID p_light, RID p_shadow_atlas, int p_pass, InstanceBase **p_cull_result, int p_cull_count);
+	virtual void render_shadow(RID p_light, RID p_shadow_atlas, int p_pass, InstanceBase **p_cull_result, int p_cull_count, const Transform &p_main_cam_transform);
 	virtual bool free(RID p_rid);
 
 	virtual void set_scene_pass(uint64_t p_pass);

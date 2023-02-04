@@ -2554,7 +2554,7 @@ void RasterizerSceneGLES3::_draw_sky(RasterizerStorageGLES3::Sky *p_sky, const C
 	storage->shaders.copy.set_conditional(CopyShaderGLES3::USE_PANORAMA, false);
 }
 
-void RasterizerSceneGLES3::_setup_environment(Environment *env, const CameraMatrix &p_cam_projection, const Transform &p_cam_transform, const int p_eye, bool p_no_fog) {
+void RasterizerSceneGLES3::_setup_environment(Environment *env, const CameraMatrix &p_cam_projection, const Transform &p_cam_transform, const Transform &p_main_cam_transform, const int p_eye, bool p_no_fog) {
 	Transform sky_orientation;
 
 	//store camera into ubo
@@ -2562,6 +2562,7 @@ void RasterizerSceneGLES3::_setup_environment(Environment *env, const CameraMatr
 	store_camera(p_cam_projection.inverse(), state.ubo_data.inv_projection_matrix);
 	store_transform(p_cam_transform, state.ubo_data.camera_matrix);
 	store_transform(p_cam_transform.affine_inverse(), state.ubo_data.camera_inverse_matrix);
+	store_transform(p_main_cam_transform, state.ubo_data.main_camera_matrix);
 
 	//time global variables
 	state.ubo_data.time = storage->frame.time[0];
@@ -4160,7 +4161,7 @@ void RasterizerSceneGLES3::render_scene(const Transform &p_cam_transform, const 
 		state.ubo_data.screen_pixel_size[1] = 1.0 / viewport_height_pixels;
 	}
 
-	_setup_environment(env, p_cam_projection, p_cam_transform, p_eye, p_reflection_probe.is_valid());
+	_setup_environment(env, p_cam_projection, p_cam_transform, p_cam_transform, p_eye, p_reflection_probe.is_valid());
 
 	bool fb_cleared = false;
 
@@ -4682,7 +4683,7 @@ void RasterizerSceneGLES3::render_scene(const Transform &p_cam_transform, const 
 	//disable all stuff
 }
 
-void RasterizerSceneGLES3::render_shadow(RID p_light, RID p_shadow_atlas, int p_pass, InstanceBase **p_cull_result, int p_cull_count) {
+void RasterizerSceneGLES3::render_shadow(RID p_light, RID p_shadow_atlas, int p_pass, InstanceBase **p_cull_result, int p_cull_count, const Transform &p_main_cam_transform) {
 	render_pass++;
 
 	directional_light = nullptr;
@@ -4890,7 +4891,7 @@ void RasterizerSceneGLES3::render_shadow(RID p_light, RID p_shadow_atlas, int p_
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 	}
 
-	_setup_environment(nullptr, light_projection, light_transform);
+	_setup_environment(nullptr, light_projection, light_transform, p_main_cam_transform);
 
 	state.scene_shader.set_conditional(SceneShaderGLES3::RENDER_DEPTH, true);
 

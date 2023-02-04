@@ -190,7 +190,7 @@ public:
 	virtual void gi_probe_instance_set_bounds(RID p_probe, const Vector3 &p_bounds) = 0;
 
 	virtual void render_scene(const Transform &p_cam_transform, const CameraMatrix &p_cam_projection, const int p_eye, bool p_cam_ortogonal, InstanceBase **p_cull_result, int p_cull_count, RID *p_light_cull_result, int p_light_cull_count, RID *p_reflection_probe_cull_result, int p_reflection_probe_cull_count, RID p_environment, RID p_shadow_atlas, RID p_reflection_atlas, RID p_reflection_probe, int p_reflection_probe_pass) = 0;
-	virtual void render_shadow(RID p_light, RID p_shadow_atlas, int p_pass, InstanceBase **p_cull_result, int p_cull_count) = 0;
+	virtual void render_shadow(RID p_light, RID p_shadow_atlas, int p_pass, InstanceBase **p_cull_result, int p_cull_count, const Transform &p_main_cam_transform) = 0;
 
 	virtual void set_scene_pass(uint64_t p_pass) = 0;
 	virtual void set_debug_draw_mode(VS::ViewportDebugDraw p_debug_draw) = 0;

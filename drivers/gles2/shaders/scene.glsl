@@ -97,6 +97,8 @@ uniform highp mat4 camera_inverse_matrix;
 uniform highp mat4 projection_matrix;
 uniform highp mat4 projection_inverse_matrix;
 
+uniform highp mat4 main_camera_matrix;
+
 uniform highp mat4 world_transform;
 
 uniform highp float time;
