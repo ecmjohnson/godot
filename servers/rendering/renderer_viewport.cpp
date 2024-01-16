@@ -28,6 +28,10 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
+#include <iostream>
+#include <fstream>
+#include <chrono>
+
 #include "renderer_viewport.h"
 
 #include "core/config/project_settings.h"
@@ -229,6 +233,8 @@ void RendererViewport::_configure_3d_render_buffers(Viewport *p_viewport) {
 
 void RendererViewport::_draw_3d(Viewport *p_viewport) {
 	RENDER_TIMESTAMP("> Render 3D Scene");
+	// TEMP
+	auto start = std::chrono::high_resolution_clock::now();
 
 	Ref<XRInterface> xr_interface;
 	if (p_viewport->use_xr && XRServer::get_singleton() != nullptr) {
@@ -253,6 +259,21 @@ void RendererViewport::_draw_3d(Viewport *p_viewport) {
 	float screen_mesh_lod_threshold = p_viewport->mesh_lod_threshold / float(p_viewport->size.width);
 	RSG::scene->render_camera(p_viewport->render_buffers, p_viewport->camera, p_viewport->scenario, p_viewport->self, p_viewport->internal_size, p_viewport->jitter_phase_count, screen_mesh_lod_threshold, p_viewport->shadow_atlas, xr_interface, &p_viewport->render_info);
 
+	// TEMP
+	auto stop = std::chrono::high_resolution_clock::now();
+	auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count();
+	std::cout << "ns = " << ns << std::endl;
+	static std::ofstream outfile;
+	static long long renderCount = 0;
+	static bool init = false;
+	if (!init) {
+		std::cout << "init" << std::endl;
+		outfile.open("timings.csv");
+		outfile << "iteration,nanoseconds" << std::endl;
+		init = true;
+	}
+	outfile << renderCount++ << "," << ns << std::endl;
+	outfile.flush();
 	RENDER_TIMESTAMP("< Render 3D Scene");
 }
 
