@@ -250,32 +250,32 @@ void SpriteFramesEditor::_sheet_preview_input(const Ref<InputEvent> &p_event) {
 	}
 }
 
-void SpriteFramesEditor::_sheet_scroll_input(const Ref<InputEvent> &p_event) {
-	const Ref<InputEventMouseButton> mb = p_event;
+// void SpriteFramesEditor::_sheet_scroll_input(const Ref<InputEvent> &p_event) {
+// 	const Ref<InputEventMouseButton> mb = p_event;
 
-	if (mb.is_valid()) {
-		// Zoom in/out using Ctrl + mouse wheel. This is done on the ScrollContainer
-		// to allow performing this action anywhere, even if the cursor isn't
-		// hovering the texture in the workspace.
-		// keep CTRL and not CMD_OR_CTRL as CTRL is expected even on MacOS.
-		if (mb->get_button_index() == MouseButton::WHEEL_UP && mb->is_pressed() && mb->is_ctrl_pressed()) {
-			_sheet_zoom_on_position(scale_ratio, mb->get_position());
-			// Don't scroll up after zooming in.
-			split_sheet_scroll->accept_event();
-		} else if (mb->get_button_index() == MouseButton::WHEEL_DOWN && mb->is_pressed() && mb->is_ctrl_pressed()) {
-			_sheet_zoom_on_position(1 / scale_ratio, mb->get_position());
-			// Don't scroll down after zooming out.
-			split_sheet_scroll->accept_event();
-		}
-	}
+// 	if (mb.is_valid()) {
+// 		// Zoom in/out using Ctrl + mouse wheel. This is done on the ScrollContainer
+// 		// to allow performing this action anywhere, even if the cursor isn't
+// 		// hovering the texture in the workspace.
+// 		// keep CTRL and not CMD_OR_CTRL as CTRL is expected even on MacOS.
+// 		if (mb->get_button_index() == MouseButton::WHEEL_UP && mb->is_pressed() && mb->is_ctrl_pressed()) {
+// 			_sheet_zoom_on_position(scale_ratio, mb->get_position());
+// 			// Don't scroll up after zooming in.
+// 			split_sheet_scroll->accept_event();
+// 		} else if (mb->get_button_index() == MouseButton::WHEEL_DOWN && mb->is_pressed() && mb->is_ctrl_pressed()) {
+// 			_sheet_zoom_on_position(1 / scale_ratio, mb->get_position());
+// 			// Don't scroll down after zooming out.
+// 			split_sheet_scroll->accept_event();
+// 		}
+// 	}
 
-	const Ref<InputEventMouseMotion> mm = p_event;
-	if (mm.is_valid() && mm->get_button_mask().has_flag(MouseButtonMask::MIDDLE)) {
-		const Vector2 dragged = Input::get_singleton()->warp_mouse_motion(mm, split_sheet_scroll->get_global_rect());
-		split_sheet_scroll->set_h_scroll(split_sheet_scroll->get_h_scroll() - dragged.x);
-		split_sheet_scroll->set_v_scroll(split_sheet_scroll->get_v_scroll() - dragged.y);
-	}
-}
+// 	const Ref<InputEventMouseMotion> mm = p_event;
+// 	if (mm.is_valid() && mm->get_button_mask().has_flag(MouseButtonMask::MIDDLE)) {
+// 		const Vector2 dragged = Input::get_singleton()->warp_mouse_motion(mm, split_sheet_scroll->get_global_rect());
+// 		split_sheet_scroll->set_h_scroll(split_sheet_scroll->get_h_scroll() - dragged.x);
+// 		split_sheet_scroll->set_v_scroll(split_sheet_scroll->get_v_scroll() - dragged.y);
+// 	}
+// }
 
 void SpriteFramesEditor::_sheet_add_frames() {
 	const Size2i frame_count = _get_frame_count();
@@ -315,10 +315,10 @@ void SpriteFramesEditor::_sheet_zoom_on_position(float p_zoom, const Vector2 &p_
 	const Size2 texture_size = split_sheet_preview->get_texture()->get_size();
 	split_sheet_preview->set_custom_minimum_size(texture_size * sheet_zoom);
 
-	Vector2 offset = Vector2(split_sheet_scroll->get_h_scroll(), split_sheet_scroll->get_v_scroll());
-	offset = (offset + p_position) / old_zoom * sheet_zoom - p_position;
-	split_sheet_scroll->set_h_scroll(offset.x);
-	split_sheet_scroll->set_v_scroll(offset.y);
+	// Vector2 offset = Vector2(split_sheet_scroll->get_h_scroll(), split_sheet_scroll->get_v_scroll());
+	// offset = (offset + p_position) / old_zoom * sheet_zoom - p_position;
+	// split_sheet_scroll->set_h_scroll(offset.x);
+	// split_sheet_scroll->set_v_scroll(offset.y);
 }
 
 void SpriteFramesEditor::_sheet_zoom_in() {
@@ -584,10 +584,10 @@ void SpriteFramesEditor::_notification(int p_what) {
 			add_anim->set_icon(get_editor_theme_icon(SNAME("New")));
 			delete_anim->set_icon(get_editor_theme_icon(SNAME("Remove")));
 			anim_search_box->set_right_icon(get_editor_theme_icon(SNAME("Search")));
-			split_sheet_zoom_out->set_icon(get_editor_theme_icon(SNAME("ZoomLess")));
-			split_sheet_zoom_reset->set_icon(get_editor_theme_icon(SNAME("ZoomReset")));
-			split_sheet_zoom_in->set_icon(get_editor_theme_icon(SNAME("ZoomMore")));
-			split_sheet_scroll->add_theme_style_override("panel", get_theme_stylebox(SNAME("panel"), SNAME("Tree")));
+			// split_sheet_zoom_out->set_icon(get_editor_theme_icon(SNAME("ZoomLess")));
+			// split_sheet_zoom_reset->set_icon(get_editor_theme_icon(SNAME("ZoomReset")));
+			// split_sheet_zoom_in->set_icon(get_editor_theme_icon(SNAME("ZoomMore")));
+			// split_sheet_scroll->add_theme_style_override("panel", get_theme_stylebox(SNAME("panel"), SNAME("Tree")));
 
 			_update_show_settings();
 		} break;
@@ -2120,6 +2120,25 @@ SpriteFramesEditor::SpriteFramesEditor() {
 	split_sheet_panel->set_v_size_flags(SIZE_EXPAND_FILL);
 	split_sheet_vb->add_child(split_sheet_panel);
 
+	zoom_widget = memnew(EditorZoomWidget);
+	split_sheet_vb->add_child(zoom_widget);
+	zoom_widget->set_anchors_and_offsets_preset(Control::PRESET_TOP_LEFT, Control::PRESET_MODE_MINSIZE, 2 * EDSCALE);
+	zoom_widget->connect("zoom_changed", callable_mp(this, &SpriteFramesEditor::_zoom_widget_changed).unbind(1));
+	zoom_widget->set_shortcut_context(this);
+
+	button_center_view = memnew(Button);
+	button_center_view->set_anchors_and_offsets_preset(Control::PRESET_TOP_RIGHT, Control::PRESET_MODE_MINSIZE, 5);
+	button_center_view->set_grow_direction_preset(Control::PRESET_TOP_RIGHT);
+	button_center_view->connect("pressed", callable_mp(this, &SpriteFramesEditor::_center_view));
+	button_center_view->set_flat(true);
+	button_center_view->set_disabled(true);
+	button_center_view->set_tooltip_text(TTR("Center View"));
+	split_sheet_vb->add_child(button_center_view);
+
+	panner.instantiate();
+	panner->set_callbacks(callable_mp(this, &SpriteFramesEditor::_pan_callback), callable_mp(this, &SpriteFramesEditor::_zoom_callback));
+	panner->set_enable_rmb(true);
+
 	split_sheet_preview = memnew(TextureRect);
 	split_sheet_preview->set_expand_mode(TextureRect::EXPAND_IGNORE_SIZE);
 	split_sheet_preview->set_texture_filter(TEXTURE_FILTER_NEAREST_WITH_MIPMAPS);
@@ -2127,44 +2146,53 @@ SpriteFramesEditor::SpriteFramesEditor() {
 	split_sheet_preview->connect("draw", callable_mp(this, &SpriteFramesEditor::_sheet_preview_draw));
 	split_sheet_preview->connect("gui_input", callable_mp(this, &SpriteFramesEditor::_sheet_preview_input));
 
-	split_sheet_scroll = memnew(ScrollContainer);
-	split_sheet_scroll->connect("gui_input", callable_mp(this, &SpriteFramesEditor::_sheet_scroll_input));
-	split_sheet_panel->add_child(split_sheet_scroll);
-	CenterContainer *cc = memnew(CenterContainer);
-	cc->add_child(split_sheet_preview);
-	cc->set_h_size_flags(SIZE_EXPAND_FILL);
-	cc->set_v_size_flags(SIZE_EXPAND_FILL);
-	split_sheet_scroll->add_child(cc);
+	// split_sheet_scroll = memnew(ScrollContainer);
+	// split_sheet_scroll->connect("gui_input", callable_mp(this, &SpriteFramesEditor::_sheet_scroll_input));
+	// split_sheet_panel->add_child(split_sheet_scroll);
+	// CenterContainer *cc = memnew(CenterContainer);
+	// cc->add_child(split_sheet_preview);
+	// cc->set_h_size_flags(SIZE_EXPAND_FILL);
+	// cc->set_v_size_flags(SIZE_EXPAND_FILL);
+	// split_sheet_scroll->add_child(cc);
 
-	MarginContainer *split_sheet_zoom_margin = memnew(MarginContainer);
-	split_sheet_panel->add_child(split_sheet_zoom_margin);
-	split_sheet_zoom_margin->set_h_size_flags(0);
-	split_sheet_zoom_margin->set_v_size_flags(0);
-	split_sheet_zoom_margin->add_theme_constant_override("margin_top", 5);
-	split_sheet_zoom_margin->add_theme_constant_override("margin_left", 5);
-	HBoxContainer *split_sheet_zoom_hb = memnew(HBoxContainer);
-	split_sheet_zoom_margin->add_child(split_sheet_zoom_hb);
+	split_sheet_center = memnew(CenterContainer);
+	split_sheet_center->set_mouse_filter(Control::MOUSE_FILTER_IGNORE);
+	split_sheet_center->set_anchors_preset(Control::PRESET_CENTER);
+	split_sheet_center->connect("gui_input", callable_mp(this, &SpriteFramesEditor::gui_input));
+	split_sheet_center->connect("focus_exited", callable_mp(panner.ptr(), &ViewPanner::release_pan_key));
+	split_sheet_center->set_focus_mode(FOCUS_CLICK);
+	split_sheet_center->add_child(split_sheet_preview);
+	split_sheet_panel->add_child(split_sheet_center);
 
-	split_sheet_zoom_out = memnew(Button);
-	split_sheet_zoom_out->set_theme_type_variation("FlatButton");
-	split_sheet_zoom_out->set_focus_mode(FOCUS_NONE);
-	split_sheet_zoom_out->set_tooltip_text(TTR("Zoom Out"));
-	split_sheet_zoom_out->connect("pressed", callable_mp(this, &SpriteFramesEditor::_sheet_zoom_out));
-	split_sheet_zoom_hb->add_child(split_sheet_zoom_out);
+	// MarginContainer *split_sheet_zoom_margin = memnew(MarginContainer);
+	// split_sheet_panel->add_child(split_sheet_zoom_margin);
+	// split_sheet_zoom_margin->set_h_size_flags(0);
+	// split_sheet_zoom_margin->set_v_size_flags(0);
+	// split_sheet_zoom_margin->add_theme_constant_override("margin_top", 5);
+	// split_sheet_zoom_margin->add_theme_constant_override("margin_left", 5);
+	// HBoxContainer *split_sheet_zoom_hb = memnew(HBoxContainer);
+	// split_sheet_zoom_margin->add_child(split_sheet_zoom_hb);
 
-	split_sheet_zoom_reset = memnew(Button);
-	split_sheet_zoom_reset->set_theme_type_variation("FlatButton");
-	split_sheet_zoom_reset->set_focus_mode(FOCUS_NONE);
-	split_sheet_zoom_reset->set_tooltip_text(TTR("Zoom Reset"));
-	split_sheet_zoom_reset->connect("pressed", callable_mp(this, &SpriteFramesEditor::_sheet_zoom_reset));
-	split_sheet_zoom_hb->add_child(split_sheet_zoom_reset);
+	// split_sheet_zoom_out = memnew(Button);
+	// split_sheet_zoom_out->set_theme_type_variation("FlatButton");
+	// split_sheet_zoom_out->set_focus_mode(FOCUS_NONE);
+	// split_sheet_zoom_out->set_tooltip_text(TTR("Zoom Out"));
+	// split_sheet_zoom_out->connect("pressed", callable_mp(this, &SpriteFramesEditor::_sheet_zoom_out));
+	// split_sheet_zoom_hb->add_child(split_sheet_zoom_out);
 
-	split_sheet_zoom_in = memnew(Button);
-	split_sheet_zoom_in->set_theme_type_variation("FlatButton");
-	split_sheet_zoom_in->set_focus_mode(FOCUS_NONE);
-	split_sheet_zoom_in->set_tooltip_text(TTR("Zoom In"));
-	split_sheet_zoom_in->connect("pressed", callable_mp(this, &SpriteFramesEditor::_sheet_zoom_in));
-	split_sheet_zoom_hb->add_child(split_sheet_zoom_in);
+	// split_sheet_zoom_reset = memnew(Button);
+	// split_sheet_zoom_reset->set_theme_type_variation("FlatButton");
+	// split_sheet_zoom_reset->set_focus_mode(FOCUS_NONE);
+	// split_sheet_zoom_reset->set_tooltip_text(TTR("Zoom Reset"));
+	// split_sheet_zoom_reset->connect("pressed", callable_mp(this, &SpriteFramesEditor::_sheet_zoom_reset));
+	// split_sheet_zoom_hb->add_child(split_sheet_zoom_reset);
+
+	// split_sheet_zoom_in = memnew(Button);
+	// split_sheet_zoom_in->set_theme_type_variation("FlatButton");
+	// split_sheet_zoom_in->set_focus_mode(FOCUS_NONE);
+	// split_sheet_zoom_in->set_tooltip_text(TTR("Zoom In"));
+	// split_sheet_zoom_in->connect("pressed", callable_mp(this, &SpriteFramesEditor::_sheet_zoom_in));
+	// split_sheet_zoom_hb->add_child(split_sheet_zoom_in);
 
 	split_sheet_settings_vb = memnew(VBoxContainer);
 	split_sheet_settings_vb->set_v_size_flags(SIZE_EXPAND_FILL);
@@ -2352,4 +2380,34 @@ SpriteFramesEditorPlugin::SpriteFramesEditorPlugin() {
 }
 
 SpriteFramesEditorPlugin::~SpriteFramesEditorPlugin() {
+}
+
+void SpriteFramesEditor::_zoom_widget_changed() {
+	// _update_zoom_and_panning();
+	emit_signal(SNAME("transform_changed"), zoom_widget->get_zoom(), panning);
+}
+
+void SpriteFramesEditor::_pan_callback(Vector2 p_scroll_vec, Ref<InputEvent> p_event) {
+	panning += p_scroll_vec;
+	// _update_zoom_and_panning(true);
+	emit_signal(SNAME("transform_changed"), zoom_widget->get_zoom(), panning);
+}
+
+void SpriteFramesEditor::_zoom_callback(float p_zoom_factor, Vector2 p_origin, Ref<InputEvent> p_event) {
+	zoom_widget->set_zoom(zoom_widget->get_zoom() * p_zoom_factor);
+	// _update_zoom_and_panning(true);
+	emit_signal(SNAME("transform_changed"), zoom_widget->get_zoom(), panning);
+}
+
+void SpriteFramesEditor::_center_view() {
+	panning = Vector2();
+	button_center_view->set_disabled(true);
+	// _update_zoom_and_panning();
+	emit_signal(SNAME("transform_changed"), zoom_widget->get_zoom(), panning);
+}
+
+void SpriteFramesEditor::gui_input(const Ref<InputEvent> &p_event) {
+	if (panner->gui_input(p_event)) {
+		accept_event();
+	}
 }

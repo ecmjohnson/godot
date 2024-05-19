@@ -45,6 +45,9 @@
 #include "scene/gui/texture_rect.h"
 #include "scene/gui/tree.h"
 #include "scene/resources/image_texture.h"
+#include "editor/gui/editor_zoom_widget.h"
+#include "scene/gui/view_panner.h"
+#include "scene/gui/center_container.h"
 
 class OptionButton;
 class EditorFileDialog;
@@ -142,8 +145,19 @@ class SpriteFramesEditor : public HSplitContainer {
 
 	ConfirmationDialog *delete_dialog = nullptr;
 
+	Ref<ViewPanner> panner;
+	void _pan_callback(Vector2 p_scroll_vec, Ref<InputEvent> p_event);
+	void _zoom_callback(float p_zoom_factor, Vector2 p_origin, Ref<InputEvent> p_event);
+	Vector2 panning;
+	Button *button_center_view = nullptr;
+	CenterContainer *split_sheet_center = nullptr;
+	void _center_view();
+	void gui_input(const Ref<InputEvent> &p_event);
+	void _zoom_widget_changed();
+
 	ConfirmationDialog *split_sheet_dialog = nullptr;
-	ScrollContainer *split_sheet_scroll = nullptr;
+	// ScrollContainer *split_sheet_scroll = nullptr;
+	EditorZoomWidget *zoom_widget = nullptr;
 	TextureRect *split_sheet_preview = nullptr;
 	VBoxContainer *split_sheet_settings_vb = nullptr;
 	SpinBox *split_sheet_h = nullptr;
@@ -239,7 +253,7 @@ class SpriteFramesEditor : public HSplitContainer {
 	void _sheet_preview_draw();
 	void _sheet_spin_changed(double p_value, int p_dominant_param);
 	void _sheet_preview_input(const Ref<InputEvent> &p_event);
-	void _sheet_scroll_input(const Ref<InputEvent> &p_event);
+	// void _sheet_scroll_input(const Ref<InputEvent> &p_event);
 	void _sheet_add_frames();
 	void _sheet_zoom_on_position(float p_zoom, const Vector2 &p_position);
 	void _sheet_zoom_in();
